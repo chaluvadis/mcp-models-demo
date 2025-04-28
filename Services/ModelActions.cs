@@ -12,11 +12,10 @@ public class ModelActions(HttpClient httpClient, IConfiguration config) : IModel
     public async ValueTask<string> RouteQueryAsync(string query)
         => query.ToLower() switch
         {
-            var q when q.Contains("travel") => await QueryModel(query, openAiConfig, "gpt-3.5-turbo"),
             var q when q.Contains("food") => await QueryModel(query, grokConfig, "grok-1.0"),
             var q when q.Contains("sports") => await QueryModel(query, llm2Config, "llm2-1.0"),
             var q when q.Contains("code") => await QueryModel(query, gemni3Config, "gemni3-1.0"),
-            _ => "No suitable model found."
+            _ => await QueryModel(query, openAiConfig, "gpt-3.5-turbo") // Default to OpenAI
         };
 
     private async ValueTask<string> QueryModel(string query, ModelApiConfig config, string modelName)
